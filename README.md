@@ -40,7 +40,7 @@ It was important for me to review core concepts of Odoo development. The best li
 | Description | Link |
 | ----------- | ---- |
 | Documentation &#40;training&#41; | https://www.odoo.com/documentation/16.0/developer/tutorials/getting_started/01_architecture.html |
-| Documentation &#40;training solutions&#41; | https://github.com/odoo/technical-training-solutions |
+| Documentation &#40;training solutions&#41; | https://github.com/odoo/technical-training-solutions/tree/16.0-core |
 | Video tutorials &#40;currently incomplete&#41; | https://www.youtube.com/watch?v=r6YLxj3H5xc&list=PLqRRLx0cl0hpu9zH6o8gq6ORBoW5xMtA- |
 
 </details>
