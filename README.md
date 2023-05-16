@@ -130,7 +130,7 @@ Before we begin, make sure you have a functional clean database (or with the dum
 1. Use the command `/path/to/odoo-server/odoo-bin scaffold custom_module_name /path/to/custom/addons/`. This will create all the basic files for you so set up a new Odoo Module. 
 2. Go to your pycharm configurations in the top right corner of the IDE and add the _-u parameter_ when running the server, to upgrade your module everytime you compile the code. `-c /path/to/configs/odoo-server.conf -u custom_module_name,custom_module_name2`.
 3. Go to your `/models/__init__.py` file and make sure the models.py is properly imported. If you do not plan on using models.py, this is a good moment to rename the file and properly import it instead of models.py.
-4. Start the server and install the module by going to Apps > Update Apps List > Search bar (search for your custom module name) > Activate. Make sure to delete anu default filters, like "Apps" or "Installed".
+4. Start the server and install the module by going to Apps > Update Apps List > Search bar (search for your custom module name) > Activate. Make sure to delete any default filters, like "Apps" or "Installed".
 5. You successfully compiled and installed your odoo module!
 6. Now go to your models.py file (or your custom) and create the barebones of your first python class. For example, let's imagine I want to create a class that manages cars. My python file will look like this:
 ```
@@ -258,3 +258,5 @@ to `git add altered/folders another_altered_file.py` to avoid problems with the 
 
 
 </div>
+
+
