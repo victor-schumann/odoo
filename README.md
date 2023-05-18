@@ -89,7 +89,7 @@ pip install -r requirements.txt
    odoo forums.
 7. Then you are done. Hit run (SHIFT+F10) and you are good to create a new database and test Odoo.
    Bookmark http://localhost:8069/web/database/manager and http://localhost:8069/web/ for future reference. When
-   creating a database, use the same password as defined during the script. The necessary fields are:
+   creating a database, use the same password as defined during the script (if you set a custom one). The necessary fields are:
     - master password;
     - database name;
     - email;
