@@ -82,7 +82,7 @@ addons_path = /home/your_username/odoo/odoo16/enterprise/addons,/home/your_usern
 pip install -r requirements.txt
 ```
 
-6. In a beautiful world, that would be it, but sometimes of the time there will be some incompatibilities with the pip
+6. In a beautiful world, that would be it, but some of the times there will be some incompatibilities with the pip
    packages. You will have to google the errors and find out the **proper pip package versions for odoo** of the bad
    package, and then install them
    with `pip install package==1.x.x`, for example. Refer ot the requirements.txt file, github issues, stackoverflow, and
