@@ -155,10 +155,10 @@ Please reference the below optional suggestions for further configuration!
 
 <details>
 <summary><h3>How to create a new Odoo Module</h3></summary>
-Before we begin, make sure you have a functional clean database (or with the dummy data), install one of the odoo modules (like Contacts), and activate the Developer Mode on settings. After doing that, you are ready to go.
+Before we begin, make sure you have a functional clean database (or with the dummy data), install one of the odoo modules (like Contacts), and activate the Developer Mode. After doing that, you are ready to go.
 
 1. Use the command `/path/to/odoo-server/odoo-bin scaffold custom_module_name /path/to/custom/addons/`. This will create
-   all the basic files for you so set up a new Odoo Module.
+   all the basic files for you to set up a new Odoo Module.
 2. Go to your pycharm configurations in the top right corner of the IDE and add the _-u parameter_ when running the
    server, to upgrade your module everytime you compile the
    code. `-c /path/to/configs/odoo-server.conf -u custom_module_name,custom_module_name2`.
@@ -218,6 +218,117 @@ custom_module0.access_car2_car2,access_car2_car2,custom_module0.model_car2_car2,
 </details>
 
 <details>
+<summary><h3>How to inherit an Odoo Module</h3></summary>
+Before we begin, make sure you have a functional clean database (or with the dummy data), and also activate the Developer Mode. After doing that, you are ready to go.
+
+<details>
+<summary><h4>Inheriting an Odoo Module</h4></summary>
+
+1. Use the command `/path/to/odoo-server/odoo-bin scaffold custom_module_name /path/to/custom/addons/`. This will create
+   all the basic files for you to set up a new Odoo Module.
+2. I usually delete/rename the `models/model.py` file and create a new one with the intended inherit. For this tutorial, I am going to create `mailing_contact.py`, to inherit a specific model that will allow me to use and modify the Mail Marketing app. The contents of the file are the following:
+```
+# -*- coding: utf-8 -*-
+
+from odoo import models, fields, api
+
+
+class MailingContact(models.Model):
+    _inherit = 'mailing.contact'
+
+    # Basic
+    test_custom_message = fields.Char(string="Test Message")
+```
+3. After you set up the file make sure to go to `models/__init__.py` file and update the import. It comes originally with the import of the `models`, and for this tutorial I changed it to `mailing_contact`. 
+4. If you try to install the module right now, you will get a gigantic error, but the key information on its last line is the following:
+```
+TypeError: Model 'mailing.contact' does not exist in registry.
+```
+That means we do not have the appropriate dependencies to work with the module. To fix this we have two choices: manually install the necessary modules or use the `depends` section in the manifest file. I will use the latter, so I will change the following line on the manifest file:
+```
+# any module necessary for this one to work correctly
+'depends': ['base', 'mailing'],
+```
+5. In the current state, Odoo will show you another error when you do that:
+```
+2023-05-18 16:03:11,136 44178 ERROR test4 odoo.modules.loading: Some modules have inconsistent states, some dependencies may be missing: ['mail_list_dlc_2'] 
+```
+By cancelling the installation and activating the module again, you will be able to install it correctly. If you create a new database, you will also be able to install the module with a single attempt.
+6. Now, if you go to the Mail Marketing app, you will see that the new field is there. Enjoy your newly inherited model!
+</details>
+<details>
+<summary><h4>Inheriting an Odoo View</h4></summary>
+
+Now, let us display the custom field we created on the above module. 
+1. First of all, locate the view that you want to inherit. In this case, I want to inherit the `mailing.contact.view.form` view, so I will go to: Email Marketing App > Mailing Lists (menu) > Mailing List Contacts (menu) > Administrator (contact).
+2. Once you are there, click on the Debug Menu button in the top right corner. This will open a list with many options. Click on the `Edit View: Form`.
+3. This granted you access to all the information regarding the current form view. Before we use this information, let's create an inherited form view. Mine will be named `mailing_contact_form_inherit.xml` and will be located in the `views` folder. The contents of the file are the following:
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record model="ir.ui.view" id="mass_mailing_contact_form_inherit">
+        <field name="name">mailing.contact.view.inherit</field>
+        <field name="model">mailing.contact</field>
+        <field name="inherit_id" ref="mass_mailing.mailing_contact_view_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="" position="">
+                <field name=""/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
+
+```
+
+There are a few ways of doing this, but the most important thing is to understand where you want to place your custom field. To do so, let's refer to the Edit View Form to understand our file. Let's place our field after `e-mail`, before `company_name`, and we are also replacing `message_bounce`.
+
+Inside the Edit, we acquired the following information:
+```xml
+<label for="email" class="oe_inline"/>
+
+<field name="company_name"/>
+
+<field name="message_bounce" attrs="{'invisible': [('id', '=', False)]}" readonly="1"/>
+```
+4. Now that we know what we are working with, let's add the following lines to our file:
+```xml
+
+   <xpath expr="//label[@for='email']" position="after">
+         <field name="test_id"/>
+   </xpath>
+   
+   <xpath expr="//field[@name='company_name']" position="before">
+        <field name="test_id"/>
+   </xpath>
+   
+   <xpath expr="//field[@name='message_bounce']" position="replace">
+        <field name="test_id"/>
+   </xpath>
+```
+
+Here is a breakdown of what is happening:
+
+`<xpath expr="//label[@for='email']" position="after">`:
+- Here, we are selecting the <label> element with the attribute for='email'.
+- We use `@for` to specify the attribute we want to filter on (because that is how it was written on the Edit View Form).
+- This XPath expression selects the <label> element with the attribute `for='email'`.
+- Then, we position the new <field> element after the selected <label> element.
+
+`<xpath expr="//field[@name='company_name']" position="before">`:
+- Here, we are selecting the `<field>` element with the attribute `name='company_name'` (again, because that is how it was written on the Edit View Form).
+- We use `@name` to specify the attribute we want to filter on.
+- This XPath expression selects the `<field>` element with the attribute `name='company_name'`.
+- Then, we position the new <field> element before the selected <field> element.
+
+5. That is it! You have successfully inherited and modified an Odoo view. Now, if you go to the Mail Marketing app, you will see that the new field is there. Enjoy your newly inherited view!
+</details>
+</details>
+
+<details>
 
 <summary><h3>Reviewing Odoo concepts</h3></summary>
 
@@ -267,6 +378,8 @@ rsync -av /path/to/odoo16/project/ /path/to/cloned/git/project/
 Once it's there you can work with your project. Double check to see if your VENV is still functional, check your
 Run/Debug configurations, and you are good to go. Whenever you make changes, and want to make a commit, make sure
 to `git add altered/folders another_altered_file.py` to avoid problems with the Odoo repository.
+
+Oh, and with this approach you can use the IDE to pull the most recent commits from Odoo repository and merge them with your code. This way your source code is always updated. Just remember to `git add` your custom folder to make three-way lane that connects Odoo, your local files, and your personal repository to upload the custom modules.
 
 #### Git cheat sheet (To actually learn Git, check [this](https://git-scm.com/book/en/v2))
 
