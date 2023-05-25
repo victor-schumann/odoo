@@ -371,8 +371,7 @@ Here is a breakdown of what is happening:
 - This XPath expression selects the `<field>` element with the attribute `name='company_name'`.
 - Then, we position the new <field> element before the selected <field> element.
 
-5. That is it! You have successfully inherited and modified an Odoo view. Now, if you go to the Mail Marketing app, you
-   will see that the new field is there. Enjoy your newly inherited view!
+5. That is it! You have successfully inherited and modified an Odoo view. Now, if you go to the Mail Marketing app model list, you will see that the new field is there. Enjoy your newly inherited view!
 
 </details>
 </details>
