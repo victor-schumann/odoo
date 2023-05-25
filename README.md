@@ -89,7 +89,8 @@ pip install -r requirements.txt
    odoo forums.
 7. Then you are done. Hit run (SHIFT+F10) and you are good to create a new database and test Odoo.
    Bookmark http://localhost:8069/web/database/manager and http://localhost:8069/web/ for future reference. When
-   creating a database, use the same password as defined during the script (if you set a custom one). The necessary fields are:
+   creating a database, use the same password as defined during the script (if you set a custom one). The necessary
+   fields are:
     - master password;
     - database name;
     - email;
@@ -154,7 +155,18 @@ Please reference the below optional suggestions for further configuration!
 ## Observations and suggestions
 
 <details>
-<summary><h3>How to create a new Odoo Module</h3></summary>
+<summary><h3>Reviewing Odoo concepts</h3></summary>
+
+It was important for me to review core concepts of Odoo development. The best links that helped me were:
+
+| Description                                    | Link                                                                                             |
+|------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| Documentation &#40;training&#41;               | https://www.odoo.com/documentation/16.0/developer/tutorials/getting_started/01_architecture.html |
+| Documentation &#40;training solutions&#41;     | https://github.com/odoo/technical-training-solutions                                             |
+| Video tutorials &#40;currently incomplete&#41; | https://www.youtube.com/watch?v=r6YLxj3H5xc&list=PLqRRLx0cl0hpu9zH6o8gq6ORBoW5xMtA-              |
+
+<details>
+<summary><h4>How to create a new Odoo Module</h4></summary>
 Before we begin, make sure you have a functional clean database (or with the dummy data), install one of the odoo modules (like Contacts), and activate the Developer Mode. After doing that, you are ready to go.
 
 1. Use the command `/path/to/odoo-server/odoo-bin scaffold custom_module_name /path/to/custom/addons/`. This will create
@@ -218,15 +230,18 @@ custom_module0.access_car2_car2,access_car2_car2,custom_module0.model_car2_car2,
 </details>
 
 <details>
-<summary><h3>How to inherit an Odoo Module</h3></summary>
+<summary><h4>How to inherit an Odoo Module</h4></summary>
 Before we begin, make sure you have a functional clean database (or with the dummy data), and also activate the Developer Mode. After doing that, you are ready to go.
 
 <details>
-<summary><h4>Inheriting an Odoo Module</h4></summary>
+<summary><h5>Inheriting an Odoo Module</h5></summary>
 
 1. Use the command `/path/to/odoo-server/odoo-bin scaffold custom_module_name /path/to/custom/addons/`. This will create
    all the basic files for you to set up a new Odoo Module.
-2. I usually delete/rename the `models/model.py` file and create a new one with the intended inherit. For this tutorial, I am going to create `mailing_contact.py`, to inherit a specific model that will allow me to use and modify the Mail Marketing app. The contents of the file are the following:
+2. I usually delete/rename the `models/model.py` file and create a new one with the intended inherit. For this tutorial,
+   I am going to create `mailing_contact.py`, to inherit a specific model that will allow me to use and modify the Mail
+   Marketing app. The contents of the file are the following:
+
 ```
 # -*- coding: utf-8 -*-
 
@@ -239,30 +254,52 @@ class MailingContact(models.Model):
     # Basic
     test_custom_message = fields.Char(string="Test Message")
 ```
-3. After you set up the file make sure to go to `models/__init__.py` file and update the import. It comes originally with the import of the `models`, and for this tutorial I changed it to `mailing_contact`. 
-4. If you try to install the module right now, you will get a gigantic error, but the key information on its last line is the following:
+
+3. After you set up the file make sure to go to `models/__init__.py` file and update the import. It comes originally
+   with the import of the `models`, and for this tutorial I changed it to `mailing_contact`.
+4. If you try to install the module right now, you will get a gigantic error, but the key information on its last line
+   is the following:
+
 ```
 TypeError: Model 'mailing.contact' does not exist in registry.
 ```
-That means we do not have the appropriate dependencies to work with the module. To fix this we have two choices: manually install the necessary modules or use the `depends` section in the manifest file. I will use the latter, so I will change the following line on the manifest file:
+
+That means we do not have the appropriate dependencies to work with the module. To fix this we have two choices:
+manually install the necessary modules or use the `depends` section in the manifest file. I will use the latter, so I
+will change the following line on the manifest file:
+
 ```
 # any module necessary for this one to work correctly
 'depends': ['base', 'mailing'],
 ```
+
 5. In the current state, Odoo will show you another error when you do that:
+
 ```
 2023-05-18 16:03:11,136 44178 ERROR test4 odoo.modules.loading: Some modules have inconsistent states, some dependencies may be missing: ['mail_list_dlc_2'] 
 ```
-By cancelling the installation and activating the module again, you will be able to install it correctly. If you create a new database, you will also be able to install the module with a single attempt.
-6. Now, if you go to the Mail Marketing app, you will see that the new field is there. Enjoy your newly inherited model!
-</details>
-<details>
-<summary><h4>Inheriting an Odoo View</h4></summary>
 
-Now, let us display the custom field we created on the above module. 
-1. First of all, locate the view that you want to inherit. In this case, I want to inherit the `mailing.contact.view.form` view, so I will go to: Email Marketing App > Mailing Lists (menu) > Mailing List Contacts (menu) > Administrator (contact).
-2. Once you are there, click on the Debug Menu button in the top right corner. This will open a list with many options. Click on the `Edit View: Form`.
-3. This granted you access to all the information regarding the current form view. Before we use this information, let's create an inherited form view. Mine will be named `mailing_contact_form_inherit.xml` and will be located in the `views` folder. The contents of the file are the following:
+By cancelling the installation and activating the module again, you will be able to install it correctly. If you create
+a new database, you will also be able to install the module with a single attempt.
+
+6. Now, if you go to the Mail Marketing app, you will see that the new field is there. Enjoy your newly inherited model!
+
+</details>
+
+<details>
+<summary><h5>Inheriting an Odoo View</h5></summary>
+
+Now, let us display the custom field we created on the above module.
+
+1. First of all, locate the view that you want to inherit. In this case, I want to inherit
+   the `mailing.contact.view.form` view, so I will go to: Email Marketing App > Mailing Lists (menu) > Mailing List
+   Contacts (menu) > Administrator (contact).
+2. Once you are there, click on the Debug Menu button in the top right corner. This will open a list with many options.
+   Click on the `Edit View: Form`.
+3. This granted you access to all the information regarding the current form view. Before we use this information, let's
+   create an inherited form view. Mine will be named `mailing_contact_form_inherit.xml` and will be located in
+   the `views` folder. The contents of the file are the following:
+
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
@@ -272,7 +309,7 @@ Now, let us display the custom field we created on the above module.
         <field name="model">mailing.contact</field>
         <field name="inherit_id" ref="mass_mailing.mailing_contact_view_form"/>
         <field name="arch" type="xml">
-            
+
             <xpath expr="" position="">
                 <field name=""/>
             </xpath>
@@ -284,62 +321,209 @@ Now, let us display the custom field we created on the above module.
 
 ```
 
-There are a few ways of doing this, but the most important thing is to understand where you want to place your custom field. To do so, let's refer to the Edit View Form to understand our file. Let's place our field after `e-mail`, before `company_name`, and we are also replacing `message_bounce`.
+There are a few ways of doing this, but the most important thing is to understand where you want to place your custom
+field. To do so, let's refer to the Edit View Form to understand our file. Let's place our field after `e-mail`,
+before `company_name`, and we are also replacing `message_bounce`.
 
 Inside the Edit, we acquired the following information:
+
 ```xml
+
 <label for="email" class="oe_inline"/>
 
 <field name="company_name"/>
 
 <field name="message_bounce" attrs="{'invisible': [('id', '=', False)]}" readonly="1"/>
 ```
+
 4. Now that we know what we are working with, let's add the following lines to our file:
+
 ```xml
 
-   <xpath expr="//label[@for='email']" position="after">
-         <field name="test_id"/>
-   </xpath>
-   
-   <xpath expr="//field[@name='company_name']" position="before">
-        <field name="test_id"/>
-   </xpath>
-   
-   <xpath expr="//field[@name='message_bounce']" position="replace">
-        <field name="test_id"/>
-   </xpath>
+<xpath expr="//label[@for='email']" position="after">
+    <field name="test_id"/>
+</xpath>
+
+<xpath expr="//field[@name='company_name']" position="before">
+<field name="test_id"/>
+</xpath>
+
+<xpath expr="//field[@name='message_bounce']" position="replace">
+<field name="test_id"/>
+</xpath>
 ```
 
 Here is a breakdown of what is happening:
 
 `<xpath expr="//label[@for='email']" position="after">`:
+
 - Here, we are selecting the <label> element with the attribute for='email'.
-- We use `@for` to specify the attribute we want to filter on (because that is how it was written on the Edit View Form).
+- We use `@for` to specify the attribute we want to filter on (because that is how it was written on the Edit View
+  Form).
 - This XPath expression selects the <label> element with the attribute `for='email'`.
 - Then, we position the new <field> element after the selected <label> element.
 
 `<xpath expr="//field[@name='company_name']" position="before">`:
-- Here, we are selecting the `<field>` element with the attribute `name='company_name'` (again, because that is how it was written on the Edit View Form).
+
+- Here, we are selecting the `<field>` element with the attribute `name='company_name'` (again, because that is how it
+  was written on the Edit View Form).
 - We use `@name` to specify the attribute we want to filter on.
 - This XPath expression selects the `<field>` element with the attribute `name='company_name'`.
 - Then, we position the new <field> element before the selected <field> element.
 
-5. That is it! You have successfully inherited and modified an Odoo view. Now, if you go to the Mail Marketing app, you will see that the new field is there. Enjoy your newly inherited view!
+5. That is it! You have successfully inherited and modified an Odoo view. Now, if you go to the Mail Marketing app, you
+   will see that the new field is there. Enjoy your newly inherited view!
+
 </details>
 </details>
 
 <details>
+<summary><h4>Wizards in Odoo</h4></summary>
 
-<summary><h3>Reviewing Odoo concepts</h3></summary>
+Here are the steps to create a wizard in odoo:
 
-It was important for me to review core concepts of Odoo development. The best links that helped me were:
+1. On a functional database/module, create a new folder called `/wizard`, and inside it create the files `__init__.py`,
+   and, for this tutorial, `wizard.py`. Populate the file with the below contents:
 
-| Description                                    | Link                                                                                             |
-|------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| Documentation &#40;training&#41;               | https://www.odoo.com/documentation/16.0/developer/tutorials/getting_started/01_architecture.html |
-| Documentation &#40;training solutions&#41;     | https://github.com/odoo/technical-training-solutions                                             |
-| Video tutorials &#40;currently incomplete&#41; | https://www.youtube.com/watch?v=r6YLxj3H5xc&list=PLqRRLx0cl0hpu9zH6o8gq6ORBoW5xMtA-              |
+```python
+# -*- coding: utf-8 -*-
 
+from odoo import models, fields, api
+
+
+class WizardFile(models.Model):
+    _name = 'wizard.file'
+
+    # Basic
+    wiz_counter = fields.Integer(string="How many contacts to add to the database?", default=1)
+
+    # Wizard Action
+    def test_wiz(self):
+        print(f"\n\tYour counter is {self.wiz_counter}\n")
+        return {'type': 'ir.actions.act_window_close'}
+```
+
+2. On the init file, add the line `from . import wizard_file`, and on the main module (`/custom_module/__init__.py`) add
+   the line `from . import wizard`.
+3. If you did everything correctly, when you compile odoo will prompt you to create access ruled for your new wizard.
+   The below message was the error I received:
+
+```python
+2023 - 05 - 19
+15: 28:41, 668
+20110
+WARNING
+test4
+odoo.modules.loading: The
+models['wizard.file']
+have
+no
+access
+rules in module
+mail_list_dlc_2, consider
+adding
+some, like:
+
+id, name, model_id: id, group_id: id, perm_read, perm_write, perm_create, perm_unlink
+mail_list_dlc_2.access_wizard_file, access_wizard_file, mail_list_dlc_2.model_wizard_file, base.group_user, 1, 0, 0, 0
+```
+
+Do as it says, and add the lines to your security csv file, just make sure to uncomment the security file on the
+manifest and to give full permissions for this test:
+
+```csv
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+[permissions for other models...]
+mail_list_dlc_2.access_wizard_file,access_wizard_file,mail_list_dlc_2.model_wizard_file,base.group_user,1,1,1,1
+```
+
+The set-up is done! Now let's do something useful with our model.
+
+4. Create a file named  `wizard_view.xml` inside the `/wizard` folder. Populate it with the following contents:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    # Form
+    <record id="wizard_view_form" model="ir.ui.view">
+        <field name="name">wizard.file.form</field>
+        <field name="model">wizard.file</field>
+        <field name="arch" type="xml">
+            <form string="Wizard Form">
+                <group>
+                    <field name="wiz_counter"/>
+                </group>
+                <footer>
+                    <button name="test_wiz" string="Wizard" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-danger" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    # Action
+    <record id="action_wizard" model="ir.actions.act_window">
+        <field name="name">Wizard Action</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wizard.file</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
+```
+
+5. Go to your manifest and import the wizard view inside the data portion before the views and after security and data
+   files.
+6. Now that we have the skeleton of our wizard, we need a way of calling it into action. I will use a menu item, and a
+   button to call the wizard. Regardless of your approach, go to the inherited view that you want to link to your wizard
+   and edit as necessary.
+7. Firstly, since I am adding a menu item, I will simply create a `menu.xml` file inside my `views` folder and add the
+   following contents:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <menuitem id="mail_test"
+              name="Test"
+              parent="mass_mailing.mass_mailing_configuration"
+              action="action_wizard"
+              sequence="-1"/>
+
+</odoo>
+```
+
+8. Add it to your manifest, compile and your wizard should be functional now.
+9. Now to create a button, I will go inherited view of mailing.contacts file and add the following contents:
+
+```xml
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record model="ir.ui.view" id="mass_mailing_contact_form_inherit">
+        <field name="name">mailing.contact.view.inherit</field>
+        <field name="model">mailing.contact</field>
+        <field name="inherit_id" ref="mass_mailing.mailing_contact_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@class='oe_title']" position="before">
+                <button name="%(name_of_module.action_wizard)d"
+                        type="action"
+                        string="Test Wizard"
+                        class="btn-primary"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
+
+```
+
+10. Remember that when working with buttons and wizards, the correct synta is `%(name_of_module.name_of_action)d`.
+
+Congratulations! You have a functional wizard linked to a button and a menu.
+
+</details>
 </details>
 
 <details>
@@ -356,8 +540,9 @@ troubleshoot. When it comes to Odoo, I tend to do the following when facing prob
 6. Check logs and search
    online ([Forums](https://www.odoo.com/forum/), [Documentation](https://www.odoo.com/documentation/16.0/), [ChatGPT](https://chat.openai.com)).
 7. Disable other modules/customizations to isolate issue.
-8. Revert to a working commit and try again.
-9. Seek help from the community or workplace.
+8. Attempt to replicate the problem on a new database.
+9. Revert to a working commit and try again.
+10. Seek help from the community or workplace.
 
 </details>
 
@@ -379,7 +564,9 @@ Once it's there you can work with your project. Double check to see if your VENV
 Run/Debug configurations, and you are good to go. Whenever you make changes, and want to make a commit, make sure
 to `git add altered/folders another_altered_file.py` to avoid problems with the Odoo repository.
 
-Oh, and with this approach you can use the IDE to pull the most recent commits from Odoo repository and merge them with your code. This way your source code is always updated. Just remember to `git add` your custom folder to make three-way lane that connects Odoo, your local files, and your personal repository to upload the custom modules.
+Oh, and with this approach you can use the IDE to pull the most recent commits from Odoo repository and merge them with
+your code. This way your source code is always updated. Just remember to `git add` your custom folder to make three-way
+lane that connects Odoo, your local files, and your personal repository to upload the custom modules.
 
 #### Git cheat sheet (To actually learn Git, check [this](https://git-scm.com/book/en/v2))
 
